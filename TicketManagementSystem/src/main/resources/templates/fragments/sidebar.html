@@ -1,0 +1,91 @@
+<div th:fragment="sidebar">
+    <style>
+        .sidebar {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 220px;
+            height: calc(100vh - 70px);
+            background-color: #1f2d3d;
+            padding: 20px 0 20px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 999;
+            overflow-y: auto;
+        }
+
+        .sidebar a {
+            color: #ffffff;
+            text-decoration: none;
+            padding: 10px 0;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            background-color: #34495e;
+            border-radius: 6px;
+            padding-left: 5px;
+        }
+
+        .sidebar a.active {
+            background-color: #34495e;
+            font-weight: bold;
+            border-radius: 6px;
+            padding-left: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: static;
+                width: 100%;
+                height: auto;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-around;
+                padding: 10px 0;
+            }
+        }
+    </style>
+
+    <div class="sidebar">
+        <!-- HomePage Links -->
+      <!--    <a th:href="@{/home}" th:classappend="${currentPage == 'home'} ? 'active'">🏠 Home</a>  -->
+
+        <!-- User Links -->
+        <a th:if="${role == 'USER'}" th:href="@{/user/dashboard}" th:classappend="${currentPage == 'dashboard'} ? 'active'">🎫 Dashboard</a>
+        <a th:if="${role == 'USER'}" th:href="@{/statusView}" th:classappend="${currentPage == 'statusView'} ? 'active'">📄 Customers Tickets</a>
+        <a th:if="${role == 'USER'}" th:href="@{/assignedTickets}" th:classappend="${currentPage == 'assignedTickets'} ? 'active'">📝 Assigned Tickets</a>
+        
+        <a th:if="${role == 'USER'}" th:href="@{/createticket}" th:classappend="${currentPage == 'createticket'} ? 'active'">📝 Create Ticket</a>
+        <a th:if="${role == 'USER'}" th:href="@{/userUpdate}" th:classappend="${currentPage == 'userUpdate'} ? 'active'">👤 Profile</a>
+        <a th:if="${role == 'USER'}" th:href="@{/contactSupport}" th:classappend="${currentPage == 'contactSupport'} ? 'active'">📞 Support</a>
+        <a th:if="${role == 'USER'}" th:href="@{/service}" th:classappend="${currentPage == 'service'} ? 'active'">🛠️ Services</a>
+        <a th:if="${role=='USER'}" th:href="@{/user/chat}" th:classappend="${currentPage == 'chat'} ? 'active'">💬 Chat</a>
+        
+        <!-- Admin Links -->
+        <a th:if="${role == 'ADMIN'}" th:href="@{/admin/dashboard}" th:classappend="${currentPage == 'adminDashboard'} ? 'active'">📊 Admin Dashboard</a>
+        <a th:if="${role == 'ADMIN'}" th:href="@{/admin/manageTickets}" th:classappend="${currentPage == 'manageTickets'} ? 'active'">🗂️ Manage Tickets</a>
+        <a th:if="${role == 'ADMIN'}" th:href="@{/admin/manageusers}" th:classappend="${currentPage == 'manageusers'} ? 'active'">👥 Manage Users</a>
+        <a th:if="${role == 'ADMIN'}" th:href="@{/admin/manageCustomers}" th:classappend="${currentPage == 'manageCustomers'} ? 'active'">👥 Manage Customers</a>
+        
+        <a th:if="${role == 'ADMIN'}" th:href="@{/admin/departments}" th:classappend="${currentPage == 'manageDepartments'} ? 'active'">🏢 Manage Departments</a>
+        <a th:if="${role == 'ADMIN'}" th:href="@{/admin/departments-dashboard}" th:classappend="${currentPage == 'departmentDashboard'} ? 'active'">📁 Departments</a>
+        <a th:if="${role == 'ADMIN'}" th:href="@{/admin/sla-breaches}" th:classappend="${currentPage == 'slaBreaches'} ? 'active'">⏱ SLA Report</a>
+        <a th:if="${role == 'ADMIN'}" th:href="@{/admin/profile}" th:classappend="${currentPage == 'profileSetting'} ? 'active'">⚙️ Profile</a>
+        <a th:if="${role=='ADMIN'}" th:href="@{/admin/chat}" th:classappend="${currentPage == 'chat'} ? 'active'">💬 Chat</a>
+        
+        <!-- Customer Links -->
+        <a th:if="${role == 'CUSTOMER'}" th:href="@{/customer/customerDashboard}" th:classappend="${currentPage == 'customerDashboard'} ? 'active'">🎫 Dashboard</a>
+        <a th:if="${role == 'CUSTOMER'}" th:href="@{/customer/customerStatusView}" th:classappend="${currentPage == 'customerStatusView'} ? 'active'">📄 My Tickets</a>
+        
+        <a th:if="${role == 'CUSTOMER'}" th:href="@{/customer/createticket}" th:classappend="${currentPage == 'cuscreateticket'} ? 'active'">📝 Create Ticket</a>
+        <a th:if="${role == 'CUSTOMER'}" th:href="@{/customerUpdate}" th:classappend="${currentPage == 'customerUpdate'} ? 'active'">👤 Profile</a>
+        <a th:if="${role == 'CUSTOMER'}" th:href="@{/contactSupport}" th:classappend="${currentPage == 'contactSupport'} ? 'active'">📞 Support</a>
+        <a th:if="${role == 'CUSTOMER'}" th:href="@{/service}" th:classappend="${currentPage == 'service'} ? 'active'">🛠️ Services</a>     
+        <!-- Chat (Common) -->
+        <a th:if="${role=='CUSTOMER'}" th:href="@{/customer/chat}" th:classappend="${currentPage == 'chat'} ? 'active'">💬 Chat</a>
+        
+    </div>
+</div>

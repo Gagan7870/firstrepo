@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"  
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+    <title>Chat</title>
+
+    <!-- WebSocket Libraries -->
+    <script src="/webjars/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/2.3.4/stomp.min.js"></script>
+
+    <style>
+        .chat-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 90vh;
+            padding: 40px 0;
+        }
+
+        .chat-container {
+            background: #2c2f4a;
+            border-radius: 10px;
+            padding: 15px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            color: white;
+            margin: 0;
+            font-size: 20px;
+        }
+
+        #chatBox {
+            height: 350px;
+            overflow-y: auto;
+            border: 1px solid #555;
+            padding: 10px;
+            background-color: #1a1b2e;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        #chatBox p {
+            margin: 5px 0;
+        }
+
+        #message {
+            width: calc(100% - 90px);
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+
+            /* ✅ Force white text and background */
+            color: white !important;
+            background-color: #1a1b2e !important;
+            caret-color: white;
+
+            /* ✅ Handle browser autofill */
+            -webkit-text-fill-color: white !important;
+            box-shadow: 0 0 0px 1000px #1a1b2e inset !important;
+        }
+
+        #message::placeholder {
+            color: #aaa !important;
+            opacity: 1 !important;
+        }
+
+        button {
+            padding: 9px 15px;
+            border: none;
+            background: #4a90e2;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #357ab8;
+        }
+
+        .input-group {
+            display: flex;
+        }
+
+        .back-btn {
+            background-color: #4a90e2;
+            font-size: 12px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .back-btn:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="chat-wrapper">
+        <div class="chat-container">
+            <div class="chat-header">
+                <button class="back-btn" onclick="goBack()">← Back</button>
+                <h2>Live Chat Support</h2>
+            </div>
+
+            <div id="chatBox"></div>
+
+            <div class="input-group">
+                <input type="text" id="message" placeholder="Type your message..." />
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        var stompClient = null;
+        var username = /*[[${username}]]*/ 'Guest';
+
+        function connect() {
+            var socket = new SockJS('/chat-websocket');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function (frame) {
+                stompClient.subscribe('/topic/messages', function (messageOutput) {
+                    showMessage(JSON.parse(messageOutput.body));
+                });
+            });
+        }
+
+        function sendMessage() {
+            const message = document.getElementById('message').value;
+            if (message.trim() !== "") {
+                stompClient.send("/app/chat", {}, JSON.stringify({
+                    'from': username,
+                    'content': message
+                }));
+                document.getElementById('message').value = '';
+            }
+        }
+
+        function showMessage(message) {
+            const chatBox = document.getElementById('chatBox');
+            chatBox.innerHTML += `<p><strong>${message.from}:</strong> ${message.content}</p>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function goBack() {
+            if (document.referrer) {
+                window.location.href = document.referrer;
+            } else {
+                window.location.href = '/';
+            }
+        }
+
+        connect();
+    </script>
+</div>
+</body>
+</html>

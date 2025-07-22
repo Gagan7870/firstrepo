@@ -1,0 +1,21 @@
+<!-- fragments/history.html -->
+<div th:fragment="historyContent">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Action</th>
+                <th>Description</th>
+                <th>Updated By</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="h : ${historyList}">
+                <td th:text="${#temporals.format(h.updatedAt, 'dd-MM-yyyy HH:mm')}"></td>
+                <td th:text="${h.action}"></td>
+                <td th:text="${h.description}"></td>
+                <td th:text="${h.updatedBy}"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

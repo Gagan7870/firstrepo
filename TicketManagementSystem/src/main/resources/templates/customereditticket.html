@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Edit Ticket</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0px 0px;
+            background: linear-gradient(to right, #bdc3c7, #2c3e50);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        h2 {
+            text-align: center;
+            color: #ffffff;
+            font-size: 32px;
+            margin-bottom: 30px;
+        }
+
+        form {
+            background-color: #ffffff;
+            padding: 40px;
+            max-width: 600px;
+            margin: 0 auto;
+            border-radius: 16px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            font-size: 16px;
+            font-family: inherit;
+        }
+
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(to right, #0072ff, #0050c4);
+        }
+
+        @media (max-width: 768px) {
+            form {
+                padding: 25px;
+                width: 90%;
+            }
+
+            h2 {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <h2>Edit Ticket</h2>
+
+    <form th:action="@{'/customer/update/' + ${ticket.id}}" th:object="${ticket}" method="post">
+    
+    
+        <label for="title">Title:</label>
+        <input type="text" id="title" th:field="*{title}" required />
+
+        <label for="description">Description:</label>
+        <textarea id="description" th:field="*{description}" required></textarea>
+
+        <label for="priority">Priority:</label>
+        <select id="priority" th:field="*{priority}">
+            <option th:each="p : ${priorities}" th:value="${p}" th:text="${p}"></option>
+        </select>
+
+       <label for="status">Status:</label>
+       <input type="text" id="status" th:value="${ticket.status}" readonly disabled />
+
+
+        <button type="submit">Update</button>
+    </form>
+</div>
+</body>
+</html>

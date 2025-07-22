@@ -1,0 +1,33 @@
+
+<footer th:fragment="footer">
+    <style>
+        .footer {
+            background-color: rgba(0, 0, 0, 0.4);
+            color: white;
+            text-align: center;
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 10px 0;
+            margin-top: auto; /* Push to bottom if space available */
+            width: 100%;
+        }
+
+        .footer a {
+            color: #ffffff;
+            text-decoration: none;
+            margin: 0 8px;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+    <div class="footer">
+        &copy; 2025 Ticket Management System &nbsp;|&nbsp;
+        <a th:href="@{/service}">About</a>
+        <a th:href="@{/contactSupport}">Contact</a>
+        <a th:href="@{/contactSupport}">Privacy Policy</a>
+    </div>
+</footer>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+
+<div layout:fragment="content">
+    <style>
+        .home-content {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        .home-content h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .home-content img {
+            max-width: 80%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+
+    <div class="home-content">
+        <h2>Welcome to the Ticket Management System</h2>
+        <img th:src="@{/images/home.jpg}" alt="Company Banner" />
+    </div>
+</div>
+
+
+</html>

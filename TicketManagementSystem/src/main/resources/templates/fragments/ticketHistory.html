@@ -1,0 +1,23 @@
+<div th:fragment="historyTable">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Action</th>
+                <th>Remarks</th>
+                <th>Updated By</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="h : ${historyList}">
+                <td th:text="${#temporals.format(h.updatedAt, 'dd-MM-yyyy HH:mm')}"></td>
+                <td th:text="${h.action}"></td>
+                <td th:text="${h.description}"></td>
+                <td th:text="${h.updatedBy}"></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(historyList)}">
+                <td colspan="4" class="text-center text-muted">No history available.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

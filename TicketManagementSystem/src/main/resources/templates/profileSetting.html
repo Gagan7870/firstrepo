@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+    <title>Admin Profile</title>
+    <meta charset="UTF-8" />
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        .profile-wrapper {
+            margin-top: 30px; /* header height */
+            margin-left: 50px; /* sidebar width */
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: calc(100vh - 100px);
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 6px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 15px;
+        }
+
+        input:focus {
+            border-color: #7f00ff;
+            outline: none;
+        }
+
+        button {
+            margin-top: 25px;
+            padding: 12px;
+            width: 100%;
+            background: linear-gradient(to right, #7f00ff, #e100ff);
+            color: white;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: linear-gradient(to right, #6a00cc, #cc00cc);
+        }
+
+        .success {
+            color: green;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .profile-wrapper {
+                margin-left: 0;
+                margin-top: 100px;
+                padding: 20px;
+            }
+
+            .form-container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="profile-wrapper">
+        <div class="form-container">
+            <h2>Update Admin Profile</h2>
+
+            <div th:if="${success}" class="success" th:text="${success}"></div>
+
+            <form th:action="@{/admin/updateProfile}" method="post" th:object="${admin}">
+                <input type="hidden" th:field="*{id}" />
+
+                <label for="username">Name</label>
+                <input type="text" th:field="*{username}" required />
+
+                <label for="email">Email</label>
+                <input type="email" th:field="*{email}" required />
+
+                <label for="phone">Phone</label>
+                <input type="text" th:field="*{phone}" />
+
+                <button type="submit">Update Profile</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

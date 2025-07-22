@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+    <title>Departments Dashboard</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .department-page {
+            flex: 1;
+            padding: 30px 30px 40px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #003049;
+            font-size: 36px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .departments-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 150px;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            color: #023e8a;
+            font-size: 18px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .card:hover {
+            background-color: #0077b6;
+            color: white;
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+        }
+
+        .icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 28px;
+            }
+
+            .card {
+                height: 130px;
+                font-size: 16px;
+            }
+
+            .icon {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="department-page">
+        <h1>Departments</h1>
+        <div class="departments-container">
+            <a class="card" href="/departments/HR">
+                <div class="icon">🏢</div>
+                HR Department
+            </a>
+            <a class="card" href="/departments/IT">
+                <div class="icon">💻</div>
+                IT Department
+            </a>
+            <a class="card" href="/departments/Finance">
+                <div class="icon">💰</div>
+                Finance Department
+            </a>
+            <a class="card" href="/departments/Legal">
+                <div class="icon">⚖️</div>
+                Legal Department
+            </a>
+            <a class="card" href="/departments/Ops">
+                <div class="icon">🛠️</div>
+                Ops Department
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

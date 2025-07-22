@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket Lifecycle</title>
+    <style>
+        body {
+            background: #f2f6fc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .content-wrapper {
+            padding: 30px;
+        }
+
+        .ticket-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .lifecycle-table {
+            width: 100%;
+            background: white;
+            border-collapse: collapse;
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .lifecycle-table th, .lifecycle-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+        }
+
+        .lifecycle-table thead {
+            background-color: #667eea;
+            color: white;
+        }
+
+        .no-history {
+            margin-top: 20px;
+            color: #888;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="content-wrapper">
+        <div class="ticket-title" th:text="'Lifecycle for Ticket: ' + ${ticket.title}"></div>
+
+        <table class="lifecycle-table" th:if="${lifecycleList != null and !lifecycleList.isEmpty()}">
+            <thead>
+                <tr>
+                    <th>From Stage</th>
+                    <th>To Stage</th>
+                    <th>Updated At</th>
+                    <th>Updated By</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="lifecycle : ${lifecycleList}">
+                    <td th:text="${lifecycle.fromStage}"></td>
+                    <td th:text="${lifecycle.toStage}"></td>
+                    <td th:text="${#temporals.format(lifecycle.updatedAt, 'dd-MM-yyyy HH:mm')}"></td>
+                    <td th:text="${lifecycle.updatedBy}"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="no-history" th:if="${lifecycleList == null or lifecycleList.isEmpty()}">
+            No lifecycle history available for this ticket.
+        </div>
+    </div>
+</div>
+</body>
+</html>

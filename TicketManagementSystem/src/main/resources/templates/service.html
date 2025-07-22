@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+    <title layout:fragment="title">Our Services</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f5f7fa;
+            height: 100%;
+        }
+
+        .full-height-wrapper {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-wrapper {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            flex: 1;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 36px;
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        .services-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 25px 20px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #1a1a1a;
+        }
+
+        .card p {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            .page-wrapper {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="full-height-wrapper">
+        <div class="page-wrapper">
+            <h1>Our Services</h1>
+
+            <div class="services-container">
+                <div class="card">
+                    <h3>Ticket Creation</h3>
+                    <p>Users can create new tickets by submitting issues or queries, which are tracked and assigned efficiently.</p>
+                </div>
+                <div class="card">
+                    <h3>Admin Dashboard</h3>
+                    <p>Admins get access to a full dashboard to monitor, assign, update, and close tickets.</p>
+                </div>
+                <div class="card">
+                    <h3>Real-time Status Updates</h3>
+                    <p>Track ticket progress and receive updates as they are worked on by the team.</p>
+                </div>
+                <div class="card">
+                    <h3>User Management</h3>
+                    <p>Admins can view, update, or delete users, assign roles, and manage access levels.</p>
+                </div>
+                <div class="card">
+                    <h3>Profile Settings</h3>
+                    <p>Users and Admins can update their personal information, including password and email.</p>
+                </div>
+                <div class="card">
+                    <h3>Secure Login</h3>
+                    <p>Role-based login system with Spring Security ensures secure and personalized access.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

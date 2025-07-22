@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Update Profile</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .content-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 50px 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background: #ffffff;
+            padding: 40px 35px;
+            border-radius: 16px;
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-top: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        button {
+            margin-top: 28px;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(to right, #00b09b, #96c93d);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(to right, #43cea2, #185a9d);
+        }
+
+        .success {
+            text-align: center;
+            color: green;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="content-wrapper">
+        <div class="container">
+            <h2>Update Profile</h2>
+
+            <div th:if="${success}" class="success" th:text="${success}"></div>
+
+            <form th:action="@{/user/update}" th:object="${user}" method="post">
+                <input type="hidden" th:field="*{id}" />
+
+                <label>Username:
+                    <input type="text" th:field="*{username}" required />
+                </label>
+
+                <label>Email:
+                    <input type="email" th:field="*{email}" required />
+                </label>
+
+                <label>Phone:
+                    <input type="text" th:field="*{phone}" required />
+                </label>
+
+                <button type="submit">Update</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

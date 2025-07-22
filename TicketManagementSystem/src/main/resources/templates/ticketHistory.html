@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Ticket History</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}" />
+    <style>
+        /* Make body a flex container column */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f2f4f7, #dce2f0);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Make the content area grow to fill space */
+        div[layout\\:fragment="content"] {
+            flex-grow: 1;
+            /* Optional: add padding */
+            padding: 20px 0;
+        }
+
+        .history-container {
+            max-width: 900px;
+            margin: 10px auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px 40px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        thead {
+            background-color: #4a69bd;
+            color: white;
+        }
+
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        @media (max-width: 768px) {
+            .history-container {
+                margin: 20px;
+                padding: 20px;
+            }
+
+            table, thead, tbody, th, td, tr {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+
+<div class="history-container">
+    <h2 th:text="'Ticket History: ' + ${ticket.title}"></h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Action</th>
+                <th>Description</th>
+                <th>Updated By</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="h : ${historyList}">
+                <td th:text="${#temporals.format(h.updatedAt, 'dd-MM-yyyy HH:mm')}"></td>
+                <td th:text="${h.action}"></td>
+                <td th:text="${h.description}"></td>
+                <td th:text="${h.updatedBy}"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</div>
+</body>
+</html>

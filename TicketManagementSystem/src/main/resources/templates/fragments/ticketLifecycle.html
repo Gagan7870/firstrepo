@@ -1,0 +1,29 @@
+<!-- fragments/ticketLifecycle.html -->
+<div th:fragment="trackingContent">
+    <div class="content-wrapper">
+        <div class="ticket-title" th:text="'Lifecycle for Ticket: ' + ${ticket.id}" style="font-weight:500;"></div>
+
+        <table class="lifecycle-table" th:if="${lifecycleList != null and !lifecycleList.isEmpty()}">
+            <thead>
+                <tr>
+                    <th>From Stage</th>
+                    <th>To Stage</th>
+                    <th>Updated At</th>
+                    <th>Updated By</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="lifecycle : ${lifecycleList}">
+                    <td th:text="${lifecycle.fromStage}"></td>
+                    <td th:text="${lifecycle.toStage}"></td>
+                    <td th:text="${#temporals.format(lifecycle.updatedAt, 'dd-MM-yyyy HH:mm')}"></td>
+                    <td th:text="${lifecycle.updatedBy}"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="no-history" th:if="${lifecycleList == null or lifecycleList.isEmpty()}">
+            No lifecycle history available for this ticket.
+        </div>
+    </div>
+</div>

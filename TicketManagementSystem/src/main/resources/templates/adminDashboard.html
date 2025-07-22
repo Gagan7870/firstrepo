@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f8f9fa;
+        }
+
+        h4 {
+            margin: 20px;
+            color: #2c3e50;
+        }
+
+        .dashboard-cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .dashboard-card {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            width: 200px;
+            text-align: center;
+            transition: transform 0.2s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: scale(1.05);
+        }
+
+        .charts-wrapper {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            padding: 20px;
+        }
+
+        .chart-container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .chart-container h3 {
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #34495e;
+            text-align: center;
+        }
+
+        .chart-container p {
+            font-size: 13px;
+            color: #666;
+            text-align: center;
+            margin-top: -5px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <h4>Welcome, Admin</h4>
+
+    <div class="dashboard-cards">
+        <div class="dashboard-card">
+            <h3>Total Tickets</h3>
+            <p th:text="${totalTickets}">0</p>
+        </div>
+        <div class="dashboard-card">
+            <h3>Resolved</h3>
+            <p th:text="${resolvedTickets}">0</p>
+        </div>
+        <div class="dashboard-card">
+            <h3>Pending</h3>
+            <p th:text="${pendingTickets}">0</p>
+        </div>
+        <div class="dashboard-card">
+            <h3>Total Users</h3>
+            <p th:text="${totalUsers}">0</p>
+        </div>
+        <div class="dashboard-card">
+            <h3>Total Customers</h3>
+            <p th:text="${totalCustomers}">0</p>
+        </div>
+    </div>
+
+    <div class="charts-wrapper">
+        <div class="chart-container">
+            <h3>Tickets by Department</h3>
+            <p>Department vs Total Tickets</p>
+            <canvas id="departmentChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h3>Tickets by User</h3>
+            <p>User vs Tickets Created</p>
+            <canvas id="userChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h3>SLA Breach Report</h3>
+            <p>Breached vs Within SLA</p>
+            <canvas id="slaChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h3>Daily Ticket Stats</h3>
+            <p>Date-wise Ticket Creation</p>
+            <canvas id="dailyChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h3>Weekly Ticket Stats</h3>
+            <p>Weekly Breakdown</p>
+            <canvas id="weeklyChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h3>Ticket Summary</h3>
+            <p>Total, Resolved, Pending</p>
+            <canvas id="ticketSummaryChart"></canvas>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const departmentData = [[${ticketsByDepartment}]];
+        const userData = [[${ticketsByUser}]];
+        const slaData = [[${slaReport}]];
+        const dailyData = [[${dailyTicketStats}]];
+        const weeklyData = [[${weeklyTicketStats}]];
+
+        const ticketSummaryData = {
+            "Total Tickets": [[${totalTickets}]],
+            "Resolved": [[${resolvedTickets}]],
+            "Pending": [[${pendingTickets}]]
+        };
+
+        function createChart(id, type, data, label, options = {}) {
+            new Chart(document.getElementById(id), {
+                type: type,
+                data: {
+                    labels: Object.keys(data),
+                    datasets: [{
+                        label: label,
+                        data: Object.values(data),
+                        backgroundColor: options.colors || [
+                            '#3498db', '#2ecc71', '#e74c3c', '#9b59b6',
+                            '#f1c40f', '#1abc9c', '#e67e22', '#95a5a6'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: type === 'pie' || type === 'doughnut',
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => `${ctx.label}: ${ctx.formattedValue}`
+                            }
+                        }
+                    },
+                    scales: type === 'bar' || type === 'line' ? {
+                        x: { title: { display: true, text: 'Category' } },
+                        y: { beginAtZero: true, title: { display: true, text: 'Tickets' } }
+                    } : {}
+                }
+            });
+        }
+
+        createChart('departmentChart', 'bar', departmentData, 'Tickets by Department');
+        createChart('userChart', 'bar', userData, 'Tickets by User');
+        createChart('slaChart', 'doughnut', slaData, 'SLA Report');
+        createChart('dailyChart', 'line', dailyData, 'Daily Stats');
+        createChart('weeklyChart', 'bar', weeklyData, 'Weekly Stats');
+        createChart('ticketSummaryChart', 'bar', ticketSummaryData, 'Ticket Summary');
+    </script>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+    <title>View Ticket Status</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <style>
+        * { box-sizing: border-box; }
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            padding: 10px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 30px;
+            color: #34495e;
+            margin-bottom: 30px;
+        }
+
+        .message-success {
+            color: green;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        table {
+            width: 90%;
+            border-collapse: collapse;
+            background-color: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+            margin-left: 70px;
+        }
+
+        td {
+            padding: 16px 20px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            font-size: 17px;
+            font-weight: 500;
+        }
+
+        th {
+            padding: 16px 20px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            font-size: 20px;
+            background: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-buttons a,
+        .action-buttons button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            transition: background 0.3s ease;
+        }
+
+        .btn-edit {
+            background-color: #007bff;
+        }
+
+        .btn-edit:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+        }
+
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+
+        /* Updated Customer Ticket History Modal Styling (Admin Style) */
+        #customerHistoryModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1050;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #customerHistoryModal .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 95%;
+            max-width: 1100px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            padding: 0;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #customerHistoryModal .close-btn {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            background: transparent;
+            color: white;
+            border: none;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        #customerHistoryContent {
+            padding: 20px;
+            font-size: 15px;
+            color: #333;
+        }
+
+        #customerHistoryModal .modal-header {
+            background-color: #007bff;
+            color: white;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            position: relative;
+        }
+
+        #customerHistoryModal .modal-header h5 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        @media (max-width: 768px) {
+            table, .action-buttons {
+                width: 100%;
+                display: block;
+                overflow-x: auto;
+            }
+
+            .action-buttons {
+                margin-top: 10px;
+            }
+
+            #customerHistoryModal .modal-content {
+                width: 90%;
+            }
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .page-item {
+            margin: 0 3px;
+        }
+
+        .page-item.disabled .page-link {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .page-item.active .page-link {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+<div layout:fragment="content" class="content-wrapper">
+
+    <div th:if="${success}" class="message-success" th:text="${success}"></div>
+
+    <h2>Your Tickets</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Created At</th>
+            <th>File/View</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="t : ${tickets}">
+            <td th:text="${t.id}"></td>
+            <td th:text="${t.title}"></td>
+            <td th:text="${t.description}"></td>
+            <td th:text="${t.status}"></td>
+            <td th:text="${t.priority}"></td>
+            <td th:text="${#temporals.format(t.createdAt, 'dd MMM yyyy HH:mm')}"></td>
+            <td>
+                <a th:if="${t.attachment != null}"
+                   th:href="@{/customer/ticket/{id}/attachment(id=${t.id})}"
+                   target="_blank" title="View attachment"
+                   style="color: #007bff; text-decoration: underline;">View File</a>
+                <span th:if="${t.attachment == null}">No File</span>
+            </td>
+            <td class="action-buttons">
+                <a th:href="@{'/customer/edit/' + ${t.id}}" class="btn-edit" title="Update">
+                    <i class="bi bi-pencil-square"></i>
+                </a>
+                <form th:action="@{'/customer/delete/' + ${t.id}}" method="post"
+                      onsubmit="return confirm('Are you sure you want to delete this ticket?');"
+                      style="display:inline;">
+                    <button type="submit" class="btn-delete" title="Delete">
+                        <i class="bi bi-trash-fill"></i>
+                    </button>
+                </form>
+                <button type="button" class="btn-edit"
+                        th:attr="data-ticket-id=${t.id}"
+                        onclick="openCustomerHistoryModal(this)" title="History">
+                    <i class="bi bi-clock-history"></i>
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-center mt-3">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${currentPageIndex == 0} ? 'disabled'">
+                <a class="page-link" th:href="@{/customer/customerStatusView(page=${currentPageIndex - 1})}">Prev</a>
+            </li>
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                th:classappend="${i == currentPageIndex} ? 'active'">
+                <a class="page-link" th:href="@{/customer/customerStatusView(page=${i})}" th:text="${i + 1}">1</a>
+            </li>
+            <li class="page-item" th:classappend="${currentPageIndex == totalPages - 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/customer/customerStatusView(page=${currentPageIndex + 1})}">Next</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Ticket History Modal -->
+    <div id="customerHistoryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>Ticket History</h5>
+                <button class="close-btn" onclick="closeCustomerModal()">×</button>
+            </div>
+            <div id="customerHistoryContent">Loading...</div>
+        </div>
+    </div>
+
+    <script>
+        function openCustomerHistoryModal(button) {
+            const ticketId = button.getAttribute("data-ticket-id");
+            const modal = document.getElementById("customerHistoryModal");
+            const contentDiv = document.getElementById("customerHistoryContent");
+
+            contentDiv.innerHTML = "Loading...";
+
+            fetch(`/customer/ticket-history/${ticketId}`)
+                .then(response => response.text())
+                .then(html => {
+                    contentDiv.innerHTML = html;
+                    modal.style.display = "flex";
+                })
+                .catch(() => {
+                    contentDiv.innerHTML = "Error loading ticket history.";
+                    modal.style.display = "flex";
+                });
+        }
+
+        function closeCustomerModal() {
+            document.getElementById("customerHistoryModal").style.display = "none";
+        }
+
+        window.addEventListener("click", function (event) {
+            const modal = document.getElementById("customerHistoryModal");
+            if (event.target === modal) {
+                closeCustomerModal();
+            }
+        });
+    </script>
+
+</div>
+</body>
+</html>

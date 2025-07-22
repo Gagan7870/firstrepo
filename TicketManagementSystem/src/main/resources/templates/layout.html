@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background-color: #1f2d3d;
+            color: white;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+
+        .centered-title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 30px;
+            font-weight: 600;
+            color: white;
+            margin: 0;
+        }
+
+        .dropdown-avatar {
+            width: 40px;
+            height: 25px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .wrapper {
+            display: flex;
+            flex: 1;
+            margin-top: 70px;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 220px;
+            height: calc(100vh - 70px);
+            background-color: #1f2d3d;
+            color: white;
+            padding: 20px 0 20px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 999;
+            overflow-y: auto;
+        }
+
+        .sidebar a {
+            color: #ffffff;
+            text-decoration: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            background-color: #34495e;
+            border-radius: 6px;
+        }
+
+        .main-content {
+            margin-left: 220px;
+            padding: 0px;
+            background: linear-gradient(to right, #74ebd5, #ACB6E5);
+            width: 100%;
+        }
+
+        footer {
+            background-color: rgba(0, 0, 0, 0.4);
+            color: white;
+            text-align: center;
+            padding: 12px 0;
+        }
+
+        .content-container {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        @media (max-width: 768px) {
+            .wrapper {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                position: static;
+                width: 100%;
+                height: auto;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-around;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding-top: 20px;
+            }
+        }
+
+        .btn-btn-danger {
+            font-weight: 600;
+        }
+
+   .floating-chat-btn {
+    position: fixed !important;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: green;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 9999 !important;
+}
+
+.floating-chat-btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.chat-icon {
+    font-size: 20px;
+}
+
+.chat-label {
+    display: inline-block;
+}
+
+
+        .chat-modal {
+            display: none;
+            position: fixed;
+            bottom: 90px;
+            right: 25px;
+            width: 320px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+            z-index: 10000;
+            flex-direction: column;
+        }
+
+        .chat-modal-content {
+            display: flex;
+            flex-direction: column;
+            height: 400px;
+        }
+
+        .chat-modal-header {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-title {
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .chat-messages {
+            padding: 10px;
+            height: 280px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 5px;
+            padding: 10px;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+        }
+
+        .chat-message {
+            margin-bottom: 8px;
+        }
+        .main-content, .ticket-wrapper, .content-container {
+    overflow: visible !important;
+    position: relative;
+}
+        /* Force the chat button to size itself based on content */
+#openChatBtn.floating-chat-btn {
+  display: inline-flex !important;
+  width: auto !important;
+}
+        #openChatBtn.floating-chat-btn {
+  position: fixed !important;
+  bottom: 30px !important;
+  right: 30px !important;
+  display: inline-flex !important;
+  align-items: center;
+  gap: 8px;
+  width: auto !important;
+  max-width: none !important;
+  z-index: 9999 !important;
+}
+        
+    </style>
+</head>
+
+<body th:attr="data-username=${username}">
+
+
+<div class="main-header">
+    <h1 class="centered-title">Ticket Management System</h1>
+
+    <div class="d-flex align-items-center ms-auto gap-3">
+        <div th:if="${isAdminPage}">
+            <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown">
+                    <img th:src="@{/images/login.jpg}" alt="Admin" class="dropdown-avatar" />
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" th:href="@{/admin/profile}">Update Profile</a></li>
+                    <li><a class="dropdown-item" th:href="@{/admin/changePassword}">Change Password</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <a th:href="@{/login}" class="btn btn-danger">Logout</a>
+    </div>
+</div>
+
+<div class="content-container">
+    <div class="wrapper">
+        <div th:replace="fragments/sidebar :: sidebar" class="sidebar"></div>
+        <div class="main-content">
+            <div layout:fragment="content"></div>
+        </div>
+    </div>
+    <footer th:replace="fragments/footer :: footer"></footer>
+</div>
+
+<!-- Floating Chat Button -->
+<button id="openChatBtn" class="floating-chat-btn">
+    <span class="chat-icon">💬</span>
+    <span class="chat-label">Chat</span>
+</button>
+
+<!-- Chat Modal -->
+<div id="chatModal" class="chat-modal">
+    <div class="chat-modal-content">
+        <div class="chat-modal-header">
+            <span class="chat-title">Live Chat</span>
+            <span class="close-chat" style="cursor:pointer;">&times;</span>
+        </div>
+        <div class="chat-messages" id="messageArea"></div>
+        <div class="chat-input-area">
+            <input type="text" id="message" class="form-control" placeholder="Type a message..." />
+            <button id="sendMessage" class="btn btn-success">Send</button>
+        </div>
+    </div>
+</div>
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<script>
+    let stompClient = null;
+    // Get username from body data attribute, fallback to Anonymous
+    let username = document.body.getAttribute('data-username') || 'Anonymous';
+    let target = 'support';
+
+    function connectWebSocket() {
+        const socket = new SockJS('/chat-websocket');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function () {
+            stompClient.subscribe(`/topic/chat-${target}`, function (message) {
+                showMessage(JSON.parse(message.body));
+            });
+        }, function (error) {
+            console.error("WebSocket connection error:", error);
+        });
+    }
+
+    function sendMessage() {
+        const input = document.getElementById('message');
+        const content = input.value.trim();
+        if (content !== '' && stompClient && stompClient.connected) {
+            const message = { from: username, content: content };
+            stompClient.send(`/app/chat/${target}`, {}, JSON.stringify(message));
+            // Remove optimistic showMessage to avoid duplicates
+            input.value = '';
+        }
+    }
+
+    function showMessage(message) {
+        const messageArea = document.getElementById('messageArea');
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'chat-message';
+        msgDiv.innerHTML = `<strong>${message.from}:</strong> ${message.content}`;
+        messageArea.appendChild(msgDiv);
+        messageArea.scrollTop = messageArea.scrollHeight;
+    }
+
+    function openChatModal() {
+        document.getElementById("chatModal").style.display = "flex";
+    }
+
+    function closeChatModal() {
+        document.getElementById("chatModal").style.display = "none";
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        connectWebSocket();
+
+        document.getElementById("openChatBtn").addEventListener("click", openChatModal);
+        document.querySelector(".close-chat").addEventListener("click", closeChatModal);
+        document.getElementById("sendMessage").addEventListener("click", sendMessage);
+        document.getElementById("message").addEventListener("keypress", function (event) {
+            if (event.key === "Enter") sendMessage();
+        });
+    });
+</script>
+<!-- Bootstrap Bundle with Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+</body>
+</html>

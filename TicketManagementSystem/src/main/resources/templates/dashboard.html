@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(to right, #e0f7fa, #e1bee7);
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            padding-top: 2px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-header h2 {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .dashboard-header p {
+            color: #555;
+        }
+
+        .stats-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.75);
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            width: 220px;
+            text-align: center;
+            padding: 25px 15px;
+            transition: transform 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-6px);
+        }
+
+        .stat-card h4 {
+            font-size: 18px;
+            color: #333;
+        }
+
+        .stat-card p {
+            font-size: 28px;
+            color: #007bff;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 50px;
+        }
+
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(6px);
+            border-radius: 16px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-6px);
+        }
+
+        .dashboard-card h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .dashboard-card p {
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-card i {
+            font-size: 32px;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            border-radius: 25px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 576px) {
+            .dashboard-header h2 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+
+    <div class="container py-4">
+
+        <!-- Header -->
+        <div class="dashboard-header">
+            <h2>🎫 User Dashboard</h2>
+            <p>Welcome, <span th:text="${username}"></span> 👋</p>
+        </div>
+
+        
+
+        <!-- Feature Cards -->
+        <div class="grid-cards">
+            <div class="dashboard-card">
+                <i class="bi bi-ticket-perforated-fill"></i>
+                <h4>View Customers Tickets</h4>
+                <p>Check the status of your submitted tickets.</p>
+                <a href="/statusView" class="btn btn-primary w-100">View Tickets</a>
+            </div>
+            
+            <div class="dashboard-card">
+                <i class="bi bi-person-lines-fill"></i>
+                <h4>Assigned Tickets</h4>
+                <p>View tickets assigned to you by admin.</p>
+                <a href="/assignedTickets" class="btn btn-info w-100">View Assigned</a>
+            </div>
+            
+
+            <div class="dashboard-card">
+                <i class="bi bi-plus-circle-fill"></i>
+                <h4>Create Customer Ticket</h4>
+                <p>Report a new issue or service request.</p>
+                <a href="/createticket" class="btn btn-success w-100">Create</a>
+            </div>
+
+            <div class="dashboard-card">
+                <i class="bi bi-person-circle"></i>
+                <h4>Profile Settings</h4>
+                <p>Manage your account details.</p>
+                <a href="/userUpdate" class="btn btn-warning w-100">Update</a>
+            </div>
+
+            <div class="dashboard-card">
+                <i class="bi bi-headset"></i>
+                <h4>Contact Support</h4>
+                <p>Reach out for help and assistance.</p>
+                <a href="/contactSupport" class="btn btn-dark w-100">Support</a>
+            </div>
+
+            <div class="dashboard-card">
+                <i class="bi bi-briefcase-fill"></i>
+                <h4>Our Services</h4>
+                <p>View all available services offered.</p>
+                <a href="/service" class="btn btn-danger w-100">Services</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

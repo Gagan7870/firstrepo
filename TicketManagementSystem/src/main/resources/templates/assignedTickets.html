@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Assigned Tickets</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #e0f7fa, #e1bee7);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .full-page-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            flex: 1;
+            padding: 20px 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        
+        .table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .table th {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            font-size: 20px;
+            vertical-align: middle;
+        }
+
+        .table td {
+            vertical-align: middle;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .OPEN { background-color: #28a745; }
+        .IN_PROGRESS { background-color: #ffc107; color: black; }
+        .RESOLVED { background-color: #17a2b8; }
+        .ON_HOLD { background-color: #fd7e14; }
+        .NEW { background-color: #6c757d; }
+
+        .btn-back {
+            margin-top: 20px;
+        }
+
+        select {
+            font-size: 13px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid #ced4da;
+        }
+         .pagination {
+            margin-top: 15px;
+            justify-content: center;
+        }
+       
+    </style>
+    
+</head>
+<body>
+<div class="full-page-wrapper" layout:fragment="content">
+    <div class="container">
+        <h2>Assigned Tickets</h2>
+
+        <div th:if="${#lists.isEmpty(tickets)}" class="alert alert-info text-center">
+            No tickets have been assigned to you yet.
+        </div>
+
+        <div th:unless="${#lists.isEmpty(tickets)}">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Priority</th>
+                        <th>Created At</th>
+                        <th>Created By</th>
+                        <th>File/View</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="ticket : ${tickets}">
+                        <td th:text="${ticket.id}">ID</td>
+                        <td th:text="${ticket.title}">Title</td>
+                        <td th:text="${ticket.description}">Description</td>
+                        <td th:text="${ticket.status}">Status</td>
+                        <td th:text="${ticket.priority}">Priority</td>
+                        <td th:text="${#temporals.format(ticket.createdAt, 'dd MMM yyyy HH:mm')}">Created At</td>
+                        <td th:text="${ticket.createdBy != null ? ticket.createdBy.username : ticket.createdByCustomer?.username}">Creator</td>
+                        <td>
+                            <span th:if="${ticket.attachment != null}">
+                                <a th:href="@{'/user/ticket/' + ${ticket.id} + '/attachment'}" target="_blank" title="View Attachment">
+                                    <i class="bi bi-file-earmark-text" style="font-size: 30px; color: #2a9d8f;"></i>
+                                </a>
+                            </span>
+                            <span th:if="${ticket.attachment == null}" style="color: #ccc;">No File</span>
+                        </td>
+                        <td>
+                        
+                           <button type="button"
+                             class="btn btn-sm btn-primary"
+                             data-bs-toggle="modal"
+                             th:data-bs-target="${'#statusModal_' + ticket.id}" title="status update">
+                             <i class="bi bi-pencil-square"></i>
+                           </button>
+
+                        
+                            <form th:action="@{'/deleteTicket/' + ${ticket.id}}" method="post"
+                                  onsubmit="return confirm('Are you sure you want to delete this ticket?');"
+                                  style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm" title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                            <button type="button" class="btn btn-info btn-sm" title="View History"
+                                    th:onclick="'openUserTicketHistoryModal(' + ${ticket.id} + ')'">
+                                <i class="bi bi-clock-history"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        
+ <div class="pagination d-flex">
+    
+        <ul class="pagination">
+            <!-- Previous button -->
+            <li class="page-item" th:classappend="${currentPageIndex == 0} ? 'disabled'">
+                <a class="page-link" th:href="@{/assignedTickets(page=${currentPageIndex - 1})}">Prev</a>
+            </li>
+
+            <!-- Page numbers -->
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                th:classappend="${i == currentPageIndex} ? 'active'">
+                <a class="page-link" th:href="@{/assignedTickets(page=${i})}" th:text="${i + 1}">1</a>
+            </li>
+
+            <!-- Next button -->
+            <li class="page-item" th:classappend="${currentPageIndex == totalPages - 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/assignedTickets(page=${currentPageIndex + 1})}">Next</a>
+            </li>
+        </ul>
+    
+</div>
+
+
+</div>
+       <!-- Status Update Modal -->
+<div th:each="ticket : ${tickets}">
+    <div class="modal fade" th:id="${'statusModal_' + ticket.id}" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{/user/updateStatusWithRemarks}" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title w-100 text-center" id="statusModalLabel">Update Status</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="ticketId" th:value="${ticket.id}" />
+
+                        <div class="mb-3">
+                            <label for="statusSelect" class="form-label">New Status</label>
+                            <select name="status" class="form-select" required>
+                                <option value="">-- Select Status --</option>
+                                <option value="OPEN">OPEN</option>                               
+                                <option value="IN_PROGRESS">IN_PROGRESS</option>
+                                <option value="ON_HOLD">ON_HOLD</option>
+                                <option value="RESOLVED">RESOLVED</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="remarks" class="form-label">Remarks</label>
+                            <textarea name="remarks" class="form-control" rows="3" placeholder="Add any remarks" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        <!-- ✅ Updated Ticket History Modal -->
+        <div id="userTicketHistoryModal" style="
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1050;
+            justify-content: center;
+            align-items: center;
+        ">
+            <div style="
+                background: white;
+                border-radius: 12px;
+                width: 95%;
+                max-width: 1100px;
+                max-height: 90vh;
+                overflow-y: auto;
+                box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+                padding: 0;
+                position: relative;
+                display: flex;
+                flex-direction: column;
+            ">
+                <div style="
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    background-color: #007bff;
+                    color: white;
+                    padding: 16px 24px;
+                    border-top-left-radius: 12px;
+                    border-top-right-radius: 12px;
+                ">
+                    <h5 style="margin: 0; font-size: 22px;">Ticket History</h5>
+                    <button onclick="closeUserTicketHistoryModal()" style="
+                        position: absolute;
+                        right: 24px;
+                        background: transparent;
+                        color: white;
+                        border: none;
+                        font-size: 24px;
+                        font-weight: bold;
+                        cursor: pointer;
+                        line-height: 1;
+                    " title="Close">&times;</button>
+                </div>
+                <div id="userHistoryContent" style="padding: 20px;">
+                    Loading...
+                </div>
+            </div>
+        </div>
+
+        <script th:inline="javascript">
+            document.addEventListener("DOMContentLoaded", function () {
+                const dropdowns = document.querySelectorAll('.status-dropdown');
+                dropdowns.forEach(dropdown => {
+                    dropdown.addEventListener('change', function () {
+                        const selectedStatus = this.value;
+                        const ticketId = this.closest('form').querySelector('.ticket-id').value;
+                        const modal = document.getElementById('statusRemarksModal');
+
+                        document.getElementById('modalTicketId').value = ticketId;
+                        document.getElementById('modalSelectedStatus').value = selectedStatus;
+                        document.getElementById('remarks').value = "";
+
+                        modal.style.display = 'flex';
+                    });
+                });
+            });
+
+            function closeStatusRemarksModal() {
+                document.getElementById("statusRemarksModal").style.display = "none";
+            }
+
+            function openUserTicketHistoryModal(ticketId) {
+                const modal = document.getElementById("userTicketHistoryModal");
+                const contentDiv = document.getElementById("userHistoryContent");
+
+                contentDiv.innerHTML = "Loading...";
+
+                fetch('/user/ticket-history/' + ticketId)
+                    .then(response => {
+                        if (!response.ok) throw new Error("Request failed");
+                        return response.text();
+                    })
+                    .then(html => {
+                        contentDiv.innerHTML = html;
+                        modal.style.display = "flex";
+                    })
+                    .catch(() => {
+                        contentDiv.innerHTML = "Error loading ticket history.";
+                        modal.style.display = "flex";
+                    });
+            }
+
+            function closeUserTicketHistoryModal() {
+                document.getElementById("userTicketHistoryModal").style.display = "none";
+            }
+        </script>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

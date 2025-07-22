@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #74ebd5, #ACB6E5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-form {
+            background-color: #ffffff;
+            padding: 2rem 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 380px;
+        }
+
+        .login-form h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-top: 1rem;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+            color: #444;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            outline: none;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #007bff;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 0.9rem;
+            margin-top: 1.5rem;
+            border: none;
+            border-radius: 8px;
+            background-color: #007bff;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            margin-top: 1rem;
+            text-align: center;
+            color: #d9534f;
+            font-weight: bold;
+        }
+
+        /* Info Paragraph */
+        .info-text {
+            text-align: center;
+            margin-top: 1.2rem;
+            margin-bottom: 0.4rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #444;
+        }
+
+        /* Signup and Forget password container */
+        .link-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+            margin-top: 0.2rem;
+        }
+
+        .link-row a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .link-row a:hover {
+            text-decoration: underline;
+        }
+
+        .dropbtn {
+            padding: 8px 16px;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .dropbtn:hover {
+            background-color: #0056b3;
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 180px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.15);
+            z-index: 1;
+            border-radius: 6px;
+            top: 110%;
+            right: 0;
+        }
+
+        .dropdown-content a {
+            color: #007bff;
+            padding: 10px 14px;
+            text-decoration: none;
+            display: block;
+            font-weight: 500;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .dropdown.show .dropdown-content {
+            display: block;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="login-form">
+    <h2>Login</h2>
+
+    <form th:action="@{/perform_login}" method="post">
+        <label for="email">User ID</label>
+        <input type="email" id="email" name="username" placeholder="Enter your email" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+
+        <button type="submit">Login</button>
+
+        <div class="error" th:if="${param.error}">
+            Invalid email or password.
+        </div>
+
+        <!-- Info Paragraph -->
+        <p class="info-text">Don't have an account?</p>
+
+        <!-- Sign Up and Forget Password Row -->
+        <div class="link-row">
+            <div class="dropdown">
+                <button type="button" class="dropbtn" onclick="toggleDropdown()">Sign Up</button>
+                <div id="dropdownContent" class="dropdown-content">
+                    <a th:href="@{/register}">User Sign Up</a>
+                    <a th:href="@{/customer/register}">Customer Sign Up</a>
+                </div>
+            </div>
+            <a th:href="@{/forget-password}">Forget Password?</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    function toggleDropdown() {
+        const dropdown = document.querySelector(".dropdown");
+        dropdown.classList.toggle("show");
+
+        // Close dropdown if clicked outside
+        document.addEventListener("click", function (event) {
+            if (!dropdown.contains(event.target)) {
+                dropdown.classList.remove("show");
+            }
+        }, { once: true });
+    }
+</script>
+
+</body>
+</html>
